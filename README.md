@@ -66,18 +66,19 @@ welcome:
   - text: Hello, world!
     typing: 250ms
     form:
+      - <form.name> survey
       - <age> Your age
       - <phone> Your phone number
 ```
 
 It's look's like a usually web form. After submitted, you can handle this event with botpress.hear method. For example:
 ```js
-bp.hear({ type: 'form' }, (event, next) => {
-    if(event.hasOwnProperty("phone") && event.hasOwnProperty("age")) {
-        // Your code...
-    }
-})
-```  
+bp.hear({ type: 'form', formName: "survey" }, (event, next) => {
+    event.reply('#formTest', {phone: event.phone});
+});
+```
+To know, what form has call the event, you can handle the form name with "formName" field, for this you may add to content.yml file "<form.name>" in the form section.
+  
 
 
 #### Other type of messages

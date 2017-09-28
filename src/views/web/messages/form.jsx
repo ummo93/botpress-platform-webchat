@@ -15,6 +15,7 @@ class FormElement extends Component {
   }
 
   render() {
+    if(this.props.name === "form.name") return null;
     return <label>
       <input
         className={style.loginInput}
@@ -40,7 +41,7 @@ export default class Form extends Component {
     if (this.props.onFormSend) {
       let representation = "";
       for(let key in this.state) representation += `${key}: ${this.state[key]}\n`
-      this.props.onFormSend(this.state, representation)
+      this.props.onFormSend(this.state, this.props.formName, representation)
     }
   }
 

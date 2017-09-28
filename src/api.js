@@ -231,6 +231,10 @@ module.exports = async (bp, config) => {
       persistedPayload.data = _.omit(persistedPayload.data, ['password'])
     }
 
+      if (payload.type === 'form') {
+          persistedPayload.data.formName = payload.formName;
+      }
+
     const message = await appendUserMessage(userId, conversationId, persistedPayload)
 
     Object.assign(message, {

@@ -98,9 +98,18 @@ export default class MessageList extends Component {
     const messages = this.props.messages || [];
     const message = messages[messages.length - 1];
     const form = message && message['message_raw'] && message['message_raw']['form'];
-
+    let formName = '';
+    if(form && form.length > 0) {
+        for(let i = 0; i < form.length; i++) {
+            if(form[i].hasOwnProperty('name') && form[i].name === "form.name") {
+                formName = form[i].placeholder;
+                break;
+            }
+        }
+    }
     return <Form
         form={form}
+        formName={formName}
         onFormSend={this.props.onFormSend} />
   }
   renderDate(date) {
