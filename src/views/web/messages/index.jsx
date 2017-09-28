@@ -10,8 +10,9 @@ import LoginPrompt from './login_prompt'
 import FileMessage from './file'
 
 import style from './style.scss'
+import Form from "./form";
 
-const TIME_BETWEEN_DATES = 10 // 10 minutes
+const TIME_BETWEEN_DATES = 10; // 10 minutes
 
 class MessageGroup extends Component {
   
@@ -31,15 +32,15 @@ class MessageGroup extends Component {
   }
 
   render() {
-    const sample = this.props.messages[0]
-    const isBot = !sample.userId
+    const sample = this.props.messages[0];
+    const isBot = !sample.userId;
 
     const className = classnames(style.message, {
       [style.user]: !isBot
-    })
+    });
 
-    const bubbleColor = this.props.fgColor
-    const textColor = this.props.textColor
+    const bubbleColor = this.props.fgColor;
+    const textColor = this.props.textColor;
 
     return <div className={className}>
       {isBot && this.renderAvatar()}
@@ -87,13 +88,21 @@ export default class MessageList extends Component {
     const message = messages[messages.length - 1]
     const quick_replies = message && message['message_raw'] && message['message_raw']['quick_replies']
 
-    return <QuickReplies 
+    return <QuickReplies
       quick_replies={quick_replies}
       fgColor={this.props.fgColor}
       onQuickReplySend={this.props.onQuickReplySend}
       onFileUploadSend={this.props.onFileUploadSend} />
   }
+  renderForm() {
+    const messages = this.props.messages || [];
+    const message = messages[messages.length - 1];
+    const form = message && message['message_raw'] && message['message_raw']['form'];
 
+    return <Form
+        form={form}
+        onFormSend={this.props.onFormSend} />
+  }
   renderDate(date) {
     return <div className={style.date}>
         {format(new Date(date), 'MMMM Do YYYY, h:mm a')}
@@ -165,6 +174,7 @@ export default class MessageList extends Component {
   render() {
     return <div className={style.messages} ref={(m) => { this.messagesDiv = m }}>
       {this.renderMessageGroups()}
+      {this.renderForm()}
       {this.renderQuickReplies()}
     </div>
   }
@@ -175,7 +185,9 @@ class Message extends Component {
   render_text() {
     return <div><p>{this.props.data.message_text}</p></div>
   }
-
+  render_form() {
+      return <div><p>{this.props.data.message_text}</p></div>
+  }
   render_quick_reply() {
     return <div><p>{this.props.data.message_text}</p></div>
   }

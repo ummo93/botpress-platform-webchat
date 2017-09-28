@@ -1,9 +1,10 @@
-import util from 'util'
-import _ from 'lodash'
-import Promise from 'bluebird'
+import util from 'util';
+import _ from 'lodash';
+import Promise from 'bluebird';
 
 
-const QUICK_REPLY_PAYLOAD = /\<(.+)\>\s(.+)/i
+const QUICK_REPLY_PAYLOAD = /\<(.+)\>\s(.+)/i;
+const FORM_INPUT_NAME = /\<(.+)\>\s(.+)/i;
 
 // TODO Extract this logic directly to botpress's UMM
 function processQuickReplies(qrs, blocName) {
@@ -13,7 +14,7 @@ function processQuickReplies(qrs, blocName) {
 
   return qrs.map(qr => {
     if (_.isString(qr) && QUICK_REPLY_PAYLOAD.test(qr)) {
-      let [, payload, text] = QUICK_REPLY_PAYLOAD.exec(qr)
+      let [, payload, text] = QUICK_REPLY_PAYLOAD.exec(qr);
       
       // <.HELLO> becomes <BLOCNAME.HELLO>
       if (payload.startsWith('.')) {
@@ -29,14 +30,29 @@ function processQuickReplies(qrs, blocName) {
     return qr
   })
 }
+function processForm(inps) {
+    if (!_.isArray(inps)) {
+        throw new Error('Expected `form` to be an array')
+    }
 
+    return inps.map(input => {
+        if (_.isString(input) && FORM_INPUT_NAME.test(input)) {
+            let [, name, placeholder] = FORM_INPUT_NAME.exec(input);
+            return {
+                placeholder: placeholder,
+                name: name
+            }
+        }
+        return input
+    })
+}
 function getUserId(event) {
   const userId = _.get(event, 'user.id')
     || _.get(event, 'user.userId')
     || _.get(event, 'userId')
     || _.get(event, 'raw.from')
     || _.get(event, 'raw.userId')
-    || _.get(event, 'raw.user.id')
+    || _.get(event, 'raw.user.id');
 
   if (!userId) {
     throw new Error('Could not find userId in the incoming event.')
@@ -48,7 +64,7 @@ function getUserId(event) {
 function PromisifyEvent(event) {
   if (!event._promise) {
     event._promise = new Promise((resolve, reject) => {
-      event._resolve = resolve
+      event._resolve = resolve;
       event._reject = reject
     })
   }
@@ -57,15 +73,15 @@ function PromisifyEvent(event) {
 }
 
 function processOutgoing({ event, blocName, instruction }) {
-  const ins = Object.assign({}, instruction) // Create a shallow copy of the instruction
+  const ins = Object.assign({}, instruction); // Create a shallow copy of the instruction
 
   ////////
   // PRE-PROCESSING
   ////////
   
-  const optionsList = ['typing', 'quick_replies']
+  const optionsList = ['typing', 'quick_replies', 'form'];
 
-  const options = _.pick(instruction, optionsList)
+  const options = _.pick(instruction, optionsList);
   
   for (let prop of optionsList) {
     delete ins[prop]
@@ -74,18 +90,20 @@ function processOutgoing({ event, blocName, instruction }) {
   if (options.quick_replies) {
     options.quick_replies = processQuickReplies(options.quick_replies, blocName)
   }
-
+  if (options.form) {
+        options.form = processForm(options.form);
+  }
   /////////
   /// Processing
   /////////
 
   if (instruction.type === 'login_prompt') {
-    const user = getUserId(event)
+    const user = getUserId(event);
 
     const raw = Object.assign({
       to: user,
       message: instruction.text
-    }, options, _.pick(event && event.raw, 'conversationId'))
+    }, options, _.pick(event && event.raw, 'conversationId'));
 
     return PromisifyEvent({
       platform: 'webchat',
@@ -97,12 +115,12 @@ function processOutgoing({ event, blocName, instruction }) {
   }
 
   if (!_.isNil(instruction.text)) {
-    const user = getUserId(event)
+    const user = getUserId(event);
 
     const raw = Object.assign({
       to: user,
       message: instruction.text
-    }, options, _.pick(event && event.raw, 'conversationId'))
+    }, options, _.pick(event && event.raw, 'conversationId'));
 
     return PromisifyEvent({
       platform: 'webchat',
@@ -123,7 +141,7 @@ function processOutgoing({ event, blocName, instruction }) {
   /// INVALID INSTRUCTION
   ////////////
 
-  const strRep = util.inspect(instruction, false, 1)
+  const strRep = util.inspect(instruction, false, 1);
   throw new Error(`Unrecognized instruction on Web in bloc '${blocName}': ${strRep}`)
 
 }
@@ -137,11 +155,11 @@ function getTemplates() {
 }
 
 module.exports = bp => {
-  const [umm, registerConnector] = _.at(bp, ['umm', 'umm.registerConnector'])
+  const [umm, registerConnector] = _.at(bp, ['umm', 'umm.registerConnector']);
 
   umm && registerConnector && registerConnector({
     platform: 'webchat',
     processOutgoing: args => processOutgoing(Object.assign({}, args, { bp })),
     templates: getTemplates()
   })
-}
+};
