@@ -57,6 +57,29 @@ welcome:
       - <QR_NO> No
 ```
 
+##### Web form
+
+##### `content.yml`
+
+```yaml
+welcome:
+  - text: Hello, world!
+    typing: 250ms
+    form:
+      - <age> Your age
+      - <phone> Your phone number
+```
+
+It's look's like a usually web form. After submitted, you can handle this event with botpress.hear method. For example:
+```js
+bp.hear({ type: 'form' }, (event, next) => {
+    if(event.hasOwnProperty("phone") && event.hasOwnProperty("age")) {
+        // Your code...
+    }
+})
+```  
+
+
 #### Other type of messages
 
 We are still working on other type of messages to increase the power of this module. Botpress is a community effort, so **Pull Requests are welcomed**.
