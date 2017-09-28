@@ -74,7 +74,7 @@ welcome:
 It's look's like a usually web form. After submitted, you can handle this event with botpress.hear method. For example:
 ```js
 bp.hear({ type: 'form', formName: "survey" }, (event, next) => {
-    event.reply('#formTest', {phone: event.phone});
+    // Your code
 });
 ```
 To know, what form has call the event, you can handle the form name with "formName" field, for this you may add to content.yml file "<form.name>" in the form section.
