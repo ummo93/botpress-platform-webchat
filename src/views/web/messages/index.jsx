@@ -94,24 +94,20 @@ export default class MessageList extends Component {
       onQuickReplySend={this.props.onQuickReplySend}
       onFileUploadSend={this.props.onFileUploadSend} />
   }
+
   renderForm() {
     const messages = this.props.messages || [];
     const message = messages[messages.length - 1];
-    const form = message && message['message_raw'] && message['message_raw']['form'];
-    let formName = '';
-    if(form && form.length > 0) {
-        for(let i = 0; i < form.length; i++) {
-            if(form[i].hasOwnProperty('name') && form[i].name === "form.name") {
-                formName = form[i].placeholder;
-                break;
-            }
-        }
+    if(message && message['message_raw'] && message['message_raw']['form']) {
+        const form = message['message_raw']['form'];
+        return <Form
+            elements={form.elements}
+            formId={form.id}
+            title={form.title}
+            onFormSend={this.props.onFormSend} />
     }
-    return <Form
-        form={form}
-        formName={formName}
-        onFormSend={this.props.onFormSend} />
   }
+
   renderDate(date) {
     return <div className={style.date}>
         {format(new Date(date), 'MMMM Do YYYY, h:mm a')}

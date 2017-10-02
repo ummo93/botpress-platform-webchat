@@ -334,10 +334,10 @@ export default class Web extends React.Component {
     })
   }
 
-  handleSendForm(fields, formName, repr) {
+  handleSendForm(fields, formId, repr) {
       return this.handleSendData({
           type: 'form',
-          formName: formName,
+          formId: formId,
           text: repr,
           data: fields
       })

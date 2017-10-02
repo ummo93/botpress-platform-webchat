@@ -232,7 +232,7 @@ module.exports = async (bp, config) => {
     }
 
       if (payload.type === 'form') {
-          persistedPayload.data.formName = payload.formName;
+          persistedPayload.data.formId = payload.formId;
       }
 
     const message = await appendUserMessage(userId, conversationId, persistedPayload)

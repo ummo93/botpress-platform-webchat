@@ -4,7 +4,6 @@ import Promise from 'bluebird';
 
 
 const QUICK_REPLY_PAYLOAD = /\<(.+)\>\s(.+)/i;
-const FORM_INPUT_NAME = /\<(.+)\>\s(.+)/i;
 
 // TODO Extract this logic directly to botpress's UMM
 function processQuickReplies(qrs, blocName) {
@@ -30,21 +29,44 @@ function processQuickReplies(qrs, blocName) {
     return qr
   })
 }
-function processForm(inps) {
-    if (!_.isArray(inps)) {
-        throw new Error('Expected `form` to be an array')
+function processForm(formElement) {
+    if (_.isArray(formElement)) {
+        throw new Error('Expected `form` to be an object!')
     }
-
-    return inps.map(input => {
-        if (_.isString(input) && FORM_INPUT_NAME.test(input)) {
-            let [, name, placeholder] = FORM_INPUT_NAME.exec(input);
+    if(!formElement.hasOwnProperty('id') || formElement.id === null) {
+        throw new Error('Expected `form.id` field')
+    }
+    if(!formElement.hasOwnProperty('elements') || (!_.isArray(formElement.elements))) {
+        throw new Error('Expected `form.elements` to be an Array!')
+    }
+    return { title: formElement.title, id: formElement.id,
+      elements: formElement.elements.map(field => {
+          if("input" in field) {
+            // Input field
             return {
-                placeholder: placeholder,
-                name: name
+              label: field.input.label,
+              placeholder: field.input.placeholder,
+              name: field.input.name
             }
-        }
-        return input
-    })
+          } else if ("textarea" in field) {
+            // Textarea field
+              return {
+                  label: field.textarea.label,
+                  placeholder: field.textarea.placeholder,
+                  name: field.textarea.name
+              }
+          } else if ("select" in field) {
+            // Select field
+              return {
+                  label: field.select.label,
+                  placeholder: field.select.placeholder,
+                  name: field.select.name
+              }
+          } else {
+              throw new Error('Cannot recognize element type!')
+          }
+      })
+    }
 }
 function getUserId(event) {
   const userId = _.get(event, 'user.id')
@@ -92,6 +114,7 @@ function processOutgoing({ event, blocName, instruction }) {
   }
   if (options.form) {
         options.form = processForm(options.form);
+        console.log(options.form);
   }
   /////////
   /// Processing

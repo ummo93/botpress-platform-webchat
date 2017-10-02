@@ -15,16 +15,18 @@ class FormElement extends Component {
   }
 
   render() {
-    if(this.props.name === "form.name") return null;
-    return <label>
+    return <div className={style.formGroup}>
+      <label>
+          {this.props.label}
+      </label>
       <input
-        className={style.loginInput}
+        className={style.formInput}
         type='input'
         placeholder={this.props.placeholder}
         name={this.props.name}
         onChange={::this.changeState(this.props.name)}
       />
-    </label>
+    </div>
   }
 }
 
@@ -41,16 +43,23 @@ export default class Form extends Component {
     if (this.props.onFormSend) {
       let representation = "";
       for(let key in this.state) representation += `${key}: ${this.state[key]}\n`
-      this.props.onFormSend(this.state, this.props.formName, representation)
+      this.props.onFormSend(this.state, this.props.formId, representation)
     }
   }
 
   render() {
-      if (!this.props.form) return null;
-      const form = this.props.form.map(fe => <FormElement parent={this} {...this.props} {...fe} />);
-      return <form className={style.loginPromptContainer} onSubmit={this.handleSubmit.bind(this)}>
-          {form}
-        <input className={style.loginButton} type="submit" value="Submit"/>
-      </form>
+      if (!this.props.elements) return null;
+      const elements = this.props.elements.map(fe => <FormElement parent={this} {...this.props} {...fe} />);
+      return <div className={style.formOverlay}>
+          <form className={style.formContainer} onSubmit={this.handleSubmit.bind(this)}>
+              <div className={style.formTitle}>
+                  {this.props.title}
+              </div>
+              {elements}
+              <div className={style.buttonLayer}>
+                <input className={style.formSubmit} type="submit" value="Submit"/>
+              </div>
+          </form>
+      </div>
   }
 }
