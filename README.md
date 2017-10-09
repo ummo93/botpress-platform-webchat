@@ -66,20 +66,66 @@ welcome:
   - text: Hello, world!
     typing: 250ms
     form:
-      - <form.name> survey
-      - <age> Your age
-      - <phone> Your phone number
+      title: Survey
+      id: survey
+      elements:
+        - input:
+            label: Email
+            placeholder: Your email
+            name: email
+            subtype: email
+            required: true
+        - textarea:
+            label: Text
+            placeholder: Your text
+            name: text
+            maxlength: 100
+            minlength: 2
 ```
 
 It's look's like a usually web form. After submitted, you can handle this event with botpress.hear method. For example:
 ```js
-bp.hear({ type: 'form', formName: "survey" }, (event, next) => {
+bp.hear({ type: 'form', formId: "survey" }, (event, next) => {
     // Your code
 });
 ```
-To know, what form has call the event, you can handle the form name with "formName" field, for this you may add to content.yml file "<form.name>" in the form section.
+To know, what form has call the event, you can handle the form name with "formId" field, for this you may add to content.yml file "id" in the form section.
   
+  
+###### Form Elements
 
+`input`
+
+Has next attributes: label, name, placeholder, subtype, required, maxlength, minlength, which works like a same attributes in html5 (`subtype` is a same as `type` in html5)
+
+`textarea`
+
+Has a same attributes like `input`, but has no `subtype` attribute
+
+`select`
+
+Has a same attributes like `textarea`, but has no `maxlength` and `minlength` attributes, and has `options` attribute, which contain an option elements.
+
+Example:
+```yaml
+- select:
+    label: Select one item
+    name: select
+    placeholder: Select one option
+    options:
+      - option:
+          label: "Hindu (Indian) vegetarian"
+          value: "hindu"
+      - option:
+          label: "Strict vegan"
+          value: "vegan"
+      - option:
+          label: "Kosher"
+          value: "kosher"
+      - option:
+          label: "Just put it in a burrito"
+          value: "burrito"
+```
 
 #### Other type of messages
 

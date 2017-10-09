@@ -45,22 +45,34 @@ function processForm(formElement) {
             // Input field
             return {
               label: field.input.label,
-              placeholder: field.input.placeholder,
-              name: field.input.name
+              placeholder: field.input.placeholder || "",
+              name: field.input.name,
+              type: "input",
+              subtype: field.input.subtype || "",
+              maxlength: field.input.maxlength || "",
+              minlength: field.input.minlength || "",
+              required: field.input.required || false
             }
           } else if ("textarea" in field) {
             // Textarea field
               return {
                   label: field.textarea.label,
-                  placeholder: field.textarea.placeholder,
-                  name: field.textarea.name
+                  placeholder: field.textarea.placeholder || "",
+                  name: field.textarea.name,
+                  type: "textarea",
+                  maxlength: field.textarea.maxlength || "",
+                  minlength: field.textarea.minlength || "",
+                  required: field.textarea.required || false
               }
           } else if ("select" in field) {
             // Select field
               return {
                   label: field.select.label,
-                  placeholder: field.select.placeholder,
-                  name: field.select.name
+                  placeholder: field.select.placeholder || "",
+                  name: field.select.name,
+                  options: field.select.options,
+                  required: field.select.required || false,
+                  type: "select"
               }
           } else {
               throw new Error('Cannot recognize element type!')
@@ -114,7 +126,6 @@ function processOutgoing({ event, blocName, instruction }) {
   }
   if (options.form) {
         options.form = processForm(options.form);
-        console.log(options.form);
   }
   /////////
   /// Processing

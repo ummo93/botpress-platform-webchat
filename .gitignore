@@ -43,3 +43,4 @@ stats.json
 # IDE files
 .vscode
 .idea
+compile.sh
