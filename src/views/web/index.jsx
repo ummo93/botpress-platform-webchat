@@ -334,6 +334,15 @@ export default class Web extends React.Component {
     })
   }
 
+  handleSendLocation(places, formId, shadowMessage) {
+      return this.handleSendData({
+          type: 'form',
+          formId: formId,
+          text: shadowMessage,
+          data: places
+      })
+  }
+
   handleSendForm(fields, formId, repr) {
       return this.handleSendData({
           type: 'form',
@@ -446,6 +455,7 @@ export default class Web extends React.Component {
       onTextChanged={::this.handleTextChanged}
       onQuickReplySend={::this.handleSendQuickReply}
       onFormSend={::this.handleSendForm}
+      onLocationSend={::this.handleSendLocation}
       onFileUploadSend={::this.handleFileUploadSend}
       onLoginPromptSend={::this.handleLoginPrompt} />
   }

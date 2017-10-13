@@ -127,6 +127,32 @@ Example:
           value: "burrito"
 ```
 
+##### Location Picker
+Location picker - this is a convenient way to get a user's geolocation.
+For this you need to specify the following parameters in the `.yml` file:
+
+```yml
+recipientAddress:
+  - text: Please enter your address
+    location_picker:
+      id: map_example
+      search_placeholder: Please type your address here:
+      title: Address confirmation
+      default_location: [-30.123, 20.123]
+```
+Then, user getting the form with a location picker element.
+Also, `default_location` parameter is not required, then browser request user location via HTML5 geolocation API
+
+At next you can get a user response via usually getting the form, for example:
+```js
+    bp.hear({ type: 'form', formId: 'map1' }, (event, next) => {
+        console.log(event.places);
+        event.reply('#rpl');
+    });
+``` 
+
+In the ```event.places``` we getting the array of the places from google-maps API
+
 #### Other type of messages
 
 We are still working on other type of messages to increase the power of this module. Botpress is a community effort, so **Pull Requests are welcomed**.

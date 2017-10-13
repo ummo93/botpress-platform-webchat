@@ -201,6 +201,7 @@ export default class Side extends React.Component {
       avatarUrl: this.props.config && this.props.config.botAvatarUrl,
       onQuickReplySend: this.props.onQuickReplySend,
       onFormSend: this.props.onFormSend,
+      onLocationSend: this.props.onLocationSend,
       onFileUploadSend: this.props.onFileUploadSend,
       onLoginPromptSend: this.props.onLoginPromptSend
     }

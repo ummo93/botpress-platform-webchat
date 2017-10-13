@@ -199,12 +199,27 @@
   }
 }
 
+.mapSearchBox {
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  width: 91%;
+  height: 32px;
+  margin-top: 45px;
+  margin-left: 0;
+  padding: 0 12px;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+  outline: none;
+  text-overflow: ellipsis;
+}
+
 .formOverlay {
   background-color: rgba(0, 0, 0, 0.5);
   width: 100vw;
   position: absolute;
   top: 0;
-  z-index: 1000000;
+  z-index: 998;
   height: 100vh;
   left: 0;
   padding: 5%;

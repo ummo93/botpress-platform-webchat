@@ -70,6 +70,7 @@ export default class UMMComponent extends Component {
         </div>
         {this.renderForm()}
         {this.renderQuickReplies()}
+        {this.renderLocationPicker()}
       </div>
   }
 
@@ -102,6 +103,17 @@ export default class UMMComponent extends Component {
       return <OverlayTrigger key={key} placement="top" overlay={tooltip}>
         <Button >{placeholder}</Button>
       </OverlayTrigger>
+  }
+  renderLocationPicker() {
+      if (!this.props.raw.location_picker) {
+          return null
+      }
+
+      const classNames = classnames(style.quickReplies, 'bp-web-quick-replies')
+
+      return <div className={classNames}>
+          Location confirmation
+      </div>
   }
   renderForm() {
         if (!this.props.raw.form) {

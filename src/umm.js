@@ -29,6 +29,24 @@ function processQuickReplies(qrs, blocName) {
     return qr
   })
 }
+
+function processMap(locElement) {
+    if (_.isArray(locElement)) throw new Error('Expected `location_picker` to be an object!');
+    if(!locElement.hasOwnProperty('id') || locElement.id === null) throw new Error('Expected `location_picker.id` field');
+    let searchPlaceholder = "Enter location";
+    let title = "Location picker";
+    let default_location = null;
+    if(locElement.hasOwnProperty('search_placeholder')) searchPlaceholder = locElement['search_placeholder'];
+    if(locElement.hasOwnProperty('title')) title = locElement['title'];
+    if(locElement.hasOwnProperty('default_location')) default_location = locElement['default_location'];
+    return {
+        id: locElement.id,
+        search_placeholder: searchPlaceholder,
+        title: title,
+        default_location: default_location
+    }
+}
+
 function processForm(formElement) {
     if (_.isArray(formElement)) {
         throw new Error('Expected `form` to be an object!')
@@ -113,7 +131,7 @@ function processOutgoing({ event, blocName, instruction }) {
   // PRE-PROCESSING
   ////////
   
-  const optionsList = ['typing', 'quick_replies', 'form'];
+  const optionsList = ['typing', 'quick_replies', 'form', 'location_picker'];
 
   const options = _.pick(instruction, optionsList);
   
@@ -125,7 +143,10 @@ function processOutgoing({ event, blocName, instruction }) {
     options.quick_replies = processQuickReplies(options.quick_replies, blocName)
   }
   if (options.form) {
-        options.form = processForm(options.form);
+    options.form = processForm(options.form);
+  }
+  if (options.location_picker) {
+    options.location_picker = processMap(options.location_picker);
   }
   /////////
   /// Processing

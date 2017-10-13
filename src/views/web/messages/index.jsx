@@ -11,6 +11,7 @@ import FileMessage from './file'
 
 import style from './style.scss'
 import Form from "./form";
+import LocationPicker from "./location_picker";
 
 const TIME_BETWEEN_DATES = 10; // 10 minutes
 
@@ -108,6 +109,20 @@ export default class MessageList extends Component {
     }
   }
 
+  renderLocationPicker() {
+      const messages = this.props.messages || [];
+      const message = messages[messages.length - 1];
+      if(message && message['message_raw'] && message['message_raw']['location_picker']) {
+          const locEl = message['message_raw']['location_picker'];
+          return <LocationPicker
+              searchPlaceholder={locEl.search_placeholder}
+              locationId={locEl.id}
+              title={locEl.title}
+              default_location={locEl.default_location}
+              onLocationSend={this.props.onLocationSend} />
+      }
+  }
+
   renderDate(date) {
     return <div className={style.date}>
         {format(new Date(date), 'MMMM Do YYYY, h:mm a')}
@@ -180,6 +195,7 @@ export default class MessageList extends Component {
     return <div className={style.messages} ref={(m) => { this.messagesDiv = m }}>
       {this.renderMessageGroups()}
       {this.renderForm()}
+      {this.renderLocationPicker()}
       {this.renderQuickReplies()}
     </div>
   }
