@@ -138,9 +138,21 @@ recipientAddress:
       id: map_example
       search_placeholder: Please type your address here:
       title: Address confirmation
+      button_title: ⚐ Send location
       default_location: [-30.123, 20.123]
 ```
+Where:
+ 
+`id` - form id,
+
+`search_placeholder` - placeholder for search box in the map widget,
+
+`title` - title of the form
+
+`button_title` - title for quick reply (request for access from client side)
+
 Then, user getting the form with a location picker element.
+
 Also, `default_location` parameter is not required, then browser request user location via HTML5 geolocation API
 
 At next you can get a user response via usually getting the form, for example:
