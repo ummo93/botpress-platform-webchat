@@ -33,6 +33,7 @@ function processQuickReplies(qrs, blocName) {
 function processMap(locElement) {
     if (_.isArray(locElement)) throw new Error('Expected `location_picker` to be an object!');
     if(!locElement.hasOwnProperty('id') || locElement.id === null) throw new Error('Expected `location_picker.id` field');
+    if(!locElement.hasOwnProperty('button_title') || locElement.button_title === null) locElement.button_title = "Send Location";
     let searchPlaceholder = "Enter location";
     let title = "Location picker";
     let default_location = null;
@@ -43,7 +44,8 @@ function processMap(locElement) {
         id: locElement.id,
         search_placeholder: searchPlaceholder,
         title: title,
-        default_location: default_location
+        default_location: default_location,
+        button_title: locElement.button_title
     }
 }
 

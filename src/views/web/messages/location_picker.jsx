@@ -6,7 +6,7 @@ import SearchBox from "react-google-maps/lib/components/places/SearchBox";
 import style from './style.scss';
 import { compose, lifecycle } from "recompose";
 import _ from "lodash";
-
+import QuickReplies from './quick_replies'
 
 const MapComponent = compose(
     lifecycle({
@@ -134,7 +134,7 @@ const MapComponent = compose(
 
 
 
-export default class LocationPicker extends Component {
+class LocationPickerForm extends Component {
 
     componentWillMount() {
         this.setState({
@@ -173,8 +173,7 @@ export default class LocationPicker extends Component {
     handleSubmit(event) {
         event.preventDefault();
         if (this.props.onLocationSend) {
-            let shadowMessage = "Location";
-            this.props.onLocationSend({ places: this.state.places}, this.props.locationId, shadowMessage)
+            this.props.onLocationSend({ places: this.state.places}, this.props.locationId, this.props.shadowMessage)
         }
     }
 
@@ -227,4 +226,39 @@ export default class LocationPicker extends Component {
             </form>
         </div>
     }
+}
+
+
+export default class LocationPicker extends Component {
+
+    componentWillMount() {
+        this.setState({
+            isQuickReply: true,
+            quick_replies: [{payload: "LOCATION_PICKER_SHOW", title: this.props.options.button_title}]
+        });
+    }
+
+    onClick(title) {
+        this.setState({
+            isQuickReply: false
+        })
+    }
+
+    render() {
+        return this.state.isQuickReply ?
+            <QuickReplies
+                quick_replies={this.state.quick_replies}
+                fgColor={this.props.fgColor}
+                onQuickReplySend={this.onClick.bind(this)}
+            /> :
+            <LocationPickerForm
+                searchPlaceholder={this.props.options.search_placeholder}
+                locationId={this.props.options.id}
+                title={this.props.options.title}
+                default_location={this.props.options.default_location}
+                onLocationSend={this.props.onLocationSend}
+                shadowMessage={this.props.options.button_title}
+            />
+    }
+
 }

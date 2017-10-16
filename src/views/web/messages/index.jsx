@@ -113,12 +113,12 @@ export default class MessageList extends Component {
       const messages = this.props.messages || [];
       const message = messages[messages.length - 1];
       if(message && message['message_raw'] && message['message_raw']['location_picker']) {
-          const locEl = message['message_raw']['location_picker'];
+          const options = message['message_raw']['location_picker'];
           return <LocationPicker
-              searchPlaceholder={locEl.search_placeholder}
-              locationId={locEl.id}
-              title={locEl.title}
-              default_location={locEl.default_location}
+              fgColor={this.props.fgColor}
+              onQuickReplySend={this.props.onQuickReplySend}
+              onFileUploadSend={this.props.onFileUploadSend}
+              options={options}
               onLocationSend={this.props.onLocationSend} />
       }
   }
