@@ -44,3 +44,4 @@ stats.json
 .vscode
 .idea
 compile.sh
+start.sh

@@ -27,23 +27,20 @@ const MapComponent = compose(
                     newMarker.type = "marker";
                     newMarker.lat = e.position.lat();
                     newMarker.lng = e.position.lng();
-
                     if(this.state.places && this.state.places.length === 0) newMarker.id = 0;
                     else newMarker.id = this.state.places.length;
-
-                    new google.maps.places.PlacesService(e.getMap()).nearbySearch({
-                        location: {lat: e.position.lat(), lng: e.position.lng()},
-                        radius: 500,
-                        type: ['store']
-                    }, (res, stat) => {
-                        switch(stat) {
+                    this.state.geolocate(newMarker.lat, newMarker.lng, newMarker);
+                },
+                geolocate: (lat, lng, newMarker) => {
+                    new google.maps.Geocoder().geocode({'location': {lat: lat, lng: lng}}, (results, status) => {
+                        switch(status) {
                             case('ZERO_RESULTS'):
                                 newMarker.info = null;
                                 this.state.places.push(newMarker);
                                 if(this.props.hasOwnProperty('onMarkerPlaced')) this.props.onMarkerPlaced(newMarker);
                                 break;
                             case('OK'):
-                                newMarker.info = res;
+                                newMarker.info = results;
                                 this.state.places.push(newMarker);
                                 if(this.props.hasOwnProperty('onMarkerPlaced')) this.props.onMarkerPlaced(newMarker);
                                 break;
@@ -67,10 +64,10 @@ const MapComponent = compose(
                     const bounds = new google.maps.LatLngBounds();
                     newMarker.lat = places[places.length - 1].geometry.location.lat();
                     newMarker.lng = places[places.length - 1].geometry.location.lng();
-                    newMarker.info = places;
                     newMarker.type = "place";
                     if(this.state.places && this.state.places.length === 0) newMarker.id = 0;
                     else newMarker.id = this.state.places.length;
+                    this.state.geolocate(newMarker.lat, newMarker.lng, newMarker);
                     this.state.places.push(newMarker);
                     if(this.props.hasOwnProperty('onMarkerPlaced')) this.props.onMarkerPlaced(newMarker);
                     places.forEach(place => {
