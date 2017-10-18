@@ -68,6 +68,7 @@ welcome:
     form:
       title: Survey
       id: survey
+      button_title: Please enter details
       elements:
         - input:
             label: Email
