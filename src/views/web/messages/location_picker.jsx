@@ -14,13 +14,30 @@ const MapComponent = compose(
             const refs = {};
             this.setState({
                 searchPlaceholder: this.props.searchPlaceholder,
-                zoom: 10,
+                zoom: 15,
+                defaultPos: true,
                 bounds: null,
                 center: this.props.defPos,
                 places: [],
                 markers: [],
+                searchBoxInput: null,
                 onMapMounted: ref => {
                     refs.map = ref;
+                    // if this is a first map mounted - add in markers[] new marker with position
+                    if(this.state.defaultPos) {
+                        let newMarker = {};
+                        newMarker.type = "place";
+                        newMarker.lat = this.props.defPos.lat;
+                        newMarker.lng = this.props.defPos.lng;
+                        if(this.state.places && this.state.places.length === 0) newMarker.id = 0;
+                        else newMarker.id = this.state.places.length;
+                        const inputNode = refs.searchBox.containerElement.children[0];
+                        this.setState({searchBoxInput: inputNode});
+                        this.state.geolocate(newMarker.lat, newMarker.lng, newMarker, (address) => {
+                            inputNode.value = address;
+                        });
+                        this.state.defaultPos = true;
+                    }
                 },
                 setPlace: (e) => {
                     let newMarker = {};
@@ -29,22 +46,28 @@ const MapComponent = compose(
                     newMarker.lng = e.position.lng();
                     if(this.state.places && this.state.places.length === 0) newMarker.id = 0;
                     else newMarker.id = this.state.places.length;
-                    this.state.geolocate(newMarker.lat, newMarker.lng, newMarker);
+                    this.state.geolocate(newMarker.lat, newMarker.lng, newMarker, (address) => {
+                        this.state.searchBoxInput.value = address;
+                    })
                 },
-                geolocate: (lat, lng, newMarker) => {
+                geolocate: (lat, lng, newMarker, callback) => {
+                    this.state.defaultPos = false;
                     new google.maps.Geocoder().geocode({'location': {lat: lat, lng: lng}}, (results, status) => {
                         switch(status) {
                             case('ZERO_RESULTS'):
                                 newMarker.info = null;
                                 this.state.places.push(newMarker);
                                 if(this.props.hasOwnProperty('onMarkerPlaced')) this.props.onMarkerPlaced(newMarker);
+                                if(callback) callback("");
                                 break;
                             case('OK'):
                                 newMarker.info = results;
                                 this.state.places.push(newMarker);
                                 if(this.props.hasOwnProperty('onMarkerPlaced')) this.props.onMarkerPlaced(newMarker);
+                                if(callback) callback(results[0].formatted_address);
                                 break;
                             default:
+                                if(callback) callback("");
                                 break;
                         }
                     });
@@ -99,15 +122,16 @@ const MapComponent = compose(
         <GoogleMap
             ref={props.onMapMounted}
             defaultZoom={props.zoom}
-            center={ props.center }
+            center={props.center}
             defaultClickableIcons={true}
             onBoundsChanged={props.onBoundsChanged}
         >
-
-        {props.markers.map((marker, index) =>
-            <Marker key={index} position={marker.position} />
-        )}
-
+            { props.defaultPos ?
+                <Marker key={0} position={props.defPos} /> :
+                props.markers.map((marker, index) =>
+                    <Marker key={index} position={marker.position} />
+                )
+            }
         <SearchBox
             ref={props.onSearchBoxMounted}
             bounds={props.bounds}
