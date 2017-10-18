@@ -40,10 +40,12 @@ const MapComponent = compose(
                     }
                 },
                 setPlace: (e) => {
+                    e.setMap(null);
                     let newMarker = {};
                     newMarker.type = "marker";
                     newMarker.lat = e.position.lat();
                     newMarker.lng = e.position.lng();
+                    this.setState({defPos: {lat: e.position.lat(), lng: e.position.lng()}});
                     if(this.state.places && this.state.places.length === 0) newMarker.id = 0;
                     else newMarker.id = this.state.places.length;
                     this.state.geolocate(newMarker.lat, newMarker.lng, newMarker, (address) => {
@@ -126,12 +128,7 @@ const MapComponent = compose(
             defaultClickableIcons={true}
             onBoundsChanged={props.onBoundsChanged}
         >
-            { props.defaultPos ?
-                <Marker key={0} position={props.defPos} /> :
-                props.markers.map((marker, index) =>
-                    <Marker key={index} position={marker.position} />
-                )
-            }
+        <Marker key={0} position={props.defPos} />
         <SearchBox
             ref={props.onSearchBoxMounted}
             bounds={props.bounds}
