@@ -59,7 +59,8 @@ function processForm(formElement) {
     if(!formElement.hasOwnProperty('elements') || (!_.isArray(formElement.elements))) {
         throw new Error('Expected `form.elements` to be an Array!')
     }
-    return { title: formElement.title, id: formElement.id,
+    if(!formElement.hasOwnProperty('button_title') || formElement.button_title === null) formElement.button_title = "Form Submitting";
+    return { title: formElement.title, id: formElement.id, button_title: formElement.button_title,
       elements: formElement.elements.map(field => {
           if("input" in field) {
             // Input field

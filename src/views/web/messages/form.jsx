@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import style from './style.scss';
+import QuickReplies from './quick_replies'
 
 class FormElement extends Component {
 
@@ -83,11 +84,24 @@ export default class Form extends Component {
       this.state = {};
   }
 
+  componentWillMount() {
+    this.setState({
+        isQuickReply: true,
+        quick_replies: [{payload: "FORM_SHOW", title: this.props.button_title}]
+    });
+  }
+  onClick(title) {
+    this.setState({
+        isQuickReply: false
+    })
+  }
   handleSubmit(event) {
     event.preventDefault();
     if (this.props.onFormSend) {
       let representation = "";
-      for(let key in this.state) representation += `${key}: ${this.state[key]}\n`
+      for(let key in this.state) {
+          if(key !== "isQuickReply" && key !== "quick_replies") representation += `${key}: ${this.state[key]}\n`
+      }
       this.props.onFormSend(this.state, this.props.formId, representation)
     }
   }
@@ -100,29 +114,35 @@ export default class Form extends Component {
       if(this.state.hide) return null;
       if (!this.props.elements) return null;
       const elements = this.props.elements.map(fe => <FormElement parent={this} {...this.props} {...fe} />);
-      return <div className={style.formOverlay}>
-          <form className={style.formContainer} onSubmit={this.handleSubmit.bind(this)}>
-              <div onClick={this.handleClose.bind(this)} className={style.formClose}>
-                  <svg version="1.1" width="15" height="15"
-                       xmlns="http://www.w3.org/2000/svg">
-                      <line x1="1" y1="15"
-                            x2="15" y2="1"
-                            stroke="grey"
-                            stroke-width="2"/>
-                      <line x1="1" y1="1"
-                            x2="15" y2="15"
-                            stroke="grey"
-                            stroke-width="2"/>
-                  </svg>
-              </div>
-              <div className={style.formTitle}>
-                  {this.props.title}
-              </div>
-              {elements}
-              <div className={style.buttonLayer}>
-                <input className={style.formSubmit} type="submit" value="Submit"/>
-              </div>
-          </form>
-      </div>
+      return this.state.isQuickReply ?
+          <QuickReplies
+              quick_replies={this.state.quick_replies}
+              fgColor={this.props.fgColor}
+              onQuickReplySend={this.onClick.bind(this)}
+          /> :
+          <div className={style.formOverlay}>
+              <form className={style.formContainer} onSubmit={this.handleSubmit.bind(this)}>
+                  <div onClick={this.handleClose.bind(this)} className={style.formClose}>
+                      <svg version="1.1" width="15" height="15"
+                           xmlns="http://www.w3.org/2000/svg">
+                          <line x1="1" y1="15"
+                                x2="15" y2="1"
+                                stroke="grey"
+                                stroke-width="2"/>
+                          <line x1="1" y1="1"
+                                x2="15" y2="15"
+                                stroke="grey"
+                                stroke-width="2"/>
+                      </svg>
+                  </div>
+                  <div className={style.formTitle}>
+                      {this.props.title}
+                  </div>
+                  {elements}
+                  <div className={style.buttonLayer}>
+                    <input className={style.formSubmit} type="submit" value="Submit"/>
+                  </div>
+              </form>
+          </div>
   }
 }

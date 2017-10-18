@@ -102,6 +102,8 @@ export default class MessageList extends Component {
     if(message && message['message_raw'] && message['message_raw']['form']) {
         const form = message['message_raw']['form'];
         return <Form
+            button_title={form.button_title}
+            fgColor={this.props.fgColor}
             elements={form.elements}
             formId={form.id}
             title={form.title}
@@ -116,8 +118,6 @@ export default class MessageList extends Component {
           const options = message['message_raw']['location_picker'];
           return <LocationPicker
               fgColor={this.props.fgColor}
-              onQuickReplySend={this.props.onQuickReplySend}
-              onFileUploadSend={this.props.onFileUploadSend}
               options={options}
               onLocationSend={this.props.onLocationSend} />
       }
