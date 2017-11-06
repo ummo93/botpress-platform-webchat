@@ -1,0 +1,1 @@
+echo Process start && npm run compile && xcopy D:\Programming\MyProjects\CONTRIBUTION\botpress-platform-webchat\bin\* D:\Programming\MyProjects\Nodejs+Express\BotPressDigitalPlanet\src\node_modules\botpress-platform-webchat\bin /sy && cd D:\Programming\MyProjects\Nodejs+Express\BotPressDigitalPlanet\src\ && npm start

@@ -44,4 +44,6 @@ stats.json
 .vscode
 .idea
 compile.sh
+compile.bat
+start.bat
 start.sh
